@@ -1,0 +1,50 @@
+{
+    "name": "csp-cope-backend",
+    "version": "1.0.0",
+    "description": "COPE-Backend",
+    "scripts": {
+        "dev": "yarn run nodemon",
+        "build": "yarn run tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aldermann/csp-cope-backend.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/aldermann/csp-cope-backend/issues"
+    },
+    "homepage": "https://github.com/aldermann/csp-cope-backend#readme",
+    "prettier": {
+        "tabWidth": 4
+    },
+    "dependencies": {
+        "@types/bcrypt": "^3.0.0",
+        "@types/compression": "^0.0.36",
+        "@types/connect-mongo": "^0.0.40",
+        "@types/dotenv": "^6.1.0",
+        "@types/express-session": "^1.15.11",
+        "@types/mongoose": "^5.3.5",
+        "@types/passport": "^0.4.7",
+        "@types/passport-local": "^1.0.33",
+        "axios": "^0.18.0",
+        "bcrypt": "^3.0.2",
+        "compression": "latest",
+        "connect-mongo": "latest",
+        "dotenv": "^6.2.0",
+        "express": "^4.16.4",
+        "express-session": "latest",
+        "mongoose": "^5.4.0",
+        "passport": "^0.4.0",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "@types/express": "^4.16.0",
+        "nodemon": "^1.18.9",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.12.0",
+        "tslint-clean-code": "^0.2.9",
+        "typescript": "^3.2.2"
+    }
+}
