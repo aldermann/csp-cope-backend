@@ -16,10 +16,15 @@ passport.use(
     new LocalStrategy(
         { passReqToCallback: true },
         async (req, username, password, done) => {
+            if (!username || !password) {
+                return done(null, false);
+            }
             const user: UserType = (await User.findOne({
                 username
             })) as UserType;
-            if (user.comparePassword(password)) {
+            if (!user) {
+                done(null, false);
+            } else if (user.comparePassword(password)) {
                 done(null, user);
             } else {
                 done(null, false);

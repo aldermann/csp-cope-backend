@@ -15,17 +15,19 @@ export type UserType = mongoose.Document & {
         avatar: string;
     };
     comparePassword: (inputPassword: string) => boolean;
+    hashPassword: () => void;
 };
 
 const userSchema = new mongoose.Schema(
     {
-        username: { type: String, unique: true },
+        username: { type: String, unique: true, required: true },
         password: { type: String, required: true },
         passwordResetExpires: Date,
         passwordResetToken: String,
         privilege: {
             type: String,
-            validate: (value: string) => {
+            required: true,
+            validate: (value: any) => {
                 return ["Admin", "Coach", "Student"].indexOf(value) !== -1;
             }
         },
@@ -41,11 +43,10 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-userSchema.pre("save", async function save() {
-    // @ts-ignore
-    const user: UserType = this;
+userSchema.methods.hashPassword = async function() {
+    const user: UserType = this as UserType;
     user.password = await bcrypt.hash(user.password, 10);
-});
+};
 
 userSchema.methods.comparePassword = function(inputPassword: string): boolean {
     return bcrypt.compareSync(inputPassword, this.password);

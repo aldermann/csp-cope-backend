@@ -1,9 +1,6 @@
 {
     "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended",
-        "tslint-clean-code"
-    ],
+    "extends": ["tslint:recommended", "tslint-clean-code"],
     "jsRules": {},
     "rules": {
         "no-commented-out-code": false,
@@ -11,6 +8,9 @@
         "trailing-comma": false,
         "arrow-parens": false,
         "object-literal-sort-keys": false
+    },
+    "linterOptions": {
+        "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
     },
     "rulesDirectory": []
 }
