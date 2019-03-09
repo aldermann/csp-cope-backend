@@ -10,13 +10,13 @@ script:
 - yarn integration_test
 - yarn unit_test
 - yarn build
-- docker build -t cspcope/cope_backend .
+- docker build -t copeteamcsp/cope_backend .
 before_deploy:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 deploy:
   skip_cleanup: true
   provider: script
-  script: docker push cspcope/cope_backend
+  script: docker push copeteamcsp/cope_backend
   branch: master
 env:
   global:
