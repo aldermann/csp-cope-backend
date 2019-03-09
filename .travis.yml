@@ -12,7 +12,7 @@ script:
 - yarn build
 - docker build -t cspcope/cope_backend .
 before_deploy:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 deploy:
   skip_cleanup: true
   provider: script
