@@ -1,6 +1,6 @@
 import "./config/dotenv";
-import "./config/mongoose";
+import {connectToDB} from "./config/mongoose";
 import "./config/passport";
 import startServer from "./server";
 
-startServer();
+connectToDB().then (startServer);

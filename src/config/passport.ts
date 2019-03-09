@@ -22,6 +22,7 @@ passport.use(
             const user: UserType = (await User.findOne({
                 username
             })) as UserType;
+            // console.log ("in passport config", user)
             if (!user) {
                 done(null, false);
             } else if (user.comparePassword(password)) {

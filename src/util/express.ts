@@ -17,7 +17,6 @@ export function protectedRoute(requiredPrivilege = "Student") {
             privilegeList.indexOf(userPrivilege) >=
             privilegeList.indexOf(requiredPrivilege)
         ) {
-            console.log ("hello");
             return next();
         } else {
             res.status(403).json({
@@ -26,4 +25,20 @@ export function protectedRoute(requiredPrivilege = "Student") {
             });
         }
     };
+}
+
+interface IValidationError {
+    location: string;
+    msg: string;
+    param: string;
+    value: string;
+}
+
+export function validationErrorFormatter({
+    location,
+    msg,
+    param,
+    value
+}: IValidationError) {
+    return `$req.${location}.${param}=${value}: ${msg}`;
 }

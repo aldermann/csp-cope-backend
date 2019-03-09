@@ -1,13 +1,16 @@
 import "./config/dotenv";
 import "./config/passport";
-import mongoose from "./config/mongoose";
+import mongoose, {connectToDB} from "./config/mongoose";
 import newRequester from "./config/mocha";
 import { expect } from "chai";
+import ChaiHttp from "chai-http"
 
 describe("Integration Testing", async function() {
     let requester: ChaiHttp.Agent;
     before(async function() {
         requester = await newRequester();
+        await connectToDB();
+        console.log (mongoose.connection.db.databaseName)
     });
 
     it("should startup nicely", async function() {

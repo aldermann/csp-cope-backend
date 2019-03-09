@@ -17,6 +17,12 @@ describe("Register/Logout/Login flow", function() {
         requester = await newRequester();
     });
 
+    it("should not register if given no username", async function() {
+        const response = await requester.post("/user/signup");
+        expect(response).to.have.status(200);
+        expect(response.body).to.have.property("status", "failure");
+    });
+
     it("should be able to register for a few users", async function() {
         for (let i: number = 0; i < 3; ++i) {
             const response = await requester
@@ -49,10 +55,10 @@ describe("Register/Logout/Login flow", function() {
     it("should login if provided correct credentials", async function() {
         const loginResponse = await requester
             .post("/user/login")
-            .send(mockUsers[0]);
-        // console.log (loginResponse.header);
+            .send({ username: "admin", password: "12345678" });
+        console.log(loginResponse.body);
         expect(loginResponse.body).to.have.property("status", "success");
-        const infoResponse = await requester.get("/user/info");
+        const infoResponse = await requester.get("/user/profile");
         expect(infoResponse).to.have.status(200);
         after(async function() {
             await requester.get("/user/logout");
@@ -63,7 +69,7 @@ describe("Register/Logout/Login flow", function() {
         const logoutResponse = await requester.get("/user/logout");
         expect(logoutResponse).to.have.status(200);
         expect(logoutResponse.body).to.have.property("status", "success");
-        const infoResponse = await requester.get("/user/info");
+        const infoResponse = await requester.get("/user/profile");
         expect(infoResponse).to.have.status(401);
     });
 

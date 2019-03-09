@@ -1,9 +1,12 @@
 import { expect } from "chai";
 import "../config/dotenv";
-import mongoose from "../config/mongoose";
+import mongoose, {connectToDB} from "../config/mongoose";
 import User, { UserType } from "./User";
 
 describe("Testing User model", function() {
+    before(async function () {
+        await connectToDB()
+    });
     it("should throw an error if required fields is not assigned", function() {
         User.create({}, (err: any) => {
             expect(err.errors.privilege, "privilege must exist").to.exist;
@@ -31,7 +34,7 @@ describe("Testing User model", function() {
         expect(user.comparePassword("thetestingpassword")).to.be.true;
     });
 
-    after(async () => {
+    after(async function() {
         await mongoose.connection.db.dropDatabase();
     });
 });

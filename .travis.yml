@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+- stable
+services:
+- mongodb
+- docker
+before_install:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+install:
+- yarn
+script:
+- yarn integration_test
+- yarn unit_test
+- yarn build
+- docker build -t cspcope/cope_backend .
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: docker push cspcope/cope_backend
+  branch: master
+env:
+  global:
+  - secure: mx0viAr52O/W5ZXUjgeu1mVXEXgzYX2rDmXvg0Qk7uoKJwAZiIpfbz2cjcNtVJVg5ev6+W+Gp6LcuGTDhObNyI6U7VgtbJmu4WCEc7VtWHCkf94QlaZda5iRuv/chS2DcSFFP36iL/A6TH7o1/WjcvYykmg9L2tmFkn9XmMj2hqliNpUWtPYf5PUlQ3HoKJT7OHtnQez1adPsUPGFB84AWgYALHliExXfKzszWXboF8gFD5mqZDDq7DfGHwozqCydeQF2SXIgalJ5zjBDrAC3VQww/jkD86U234RRH0mHe9Skh0WSMrLUFLJbLIfc52kMZlNRU9lCBtCOW1BTb0IydiLzf8oEsdbSmEqm5CgecfNHuRGAA54cSp6fJRIiGZF98zfqLNw3g2D0jymVYMGx2G3YAtvjawnWDTLFxK1UsshzgVFJ2bRn99IdRu/Y4Aa1Imy9esmh2c03DScvPoitn4ZrWaknGiN1Y96S07LnrNJ2lSLMGK4cc75oZnOmHXSx3umBdT3JOTiAIKVjPUOyzIAhGnLXnX7oJiVmpLzfUPHnTW3GHfWyGSSKax4XYNjDZVD4Y554I/pKaw4SjeWjaYVYHb+6P123cysvo1GDU7mX9zNYaFCzHja1lxMm7LPvtM1JJ9Xso1KylkElpQk1KatkPtBDXwBOI+M1MP6laI=
+  - secure: ZE7ReDZ3w1/TbIevPQCxc116U/jyq/Kw97K712lansqhA26cRapp+pjgpxSA4TkA5hRlcGtDufzMVgvcjLBLX2GSjtmUNLklMHwNTydR6SP9WAJnkslowyXJW0TVzPUh+FNCWPut5qo7vboodPzC81DPsQ8+r9kK19CaEbqfSY+tHlo1WiXl4WNsHmBIhlwwl0/3RN8YlOi76ZAb8+DBlamwnTe/WIAWgW9/8a2zM97hm5CcpN1KHfK1+SfMIZbDQgLVFmkvZmkPKRVJmwRk5FOzBFQTGugG2UFLaLV+rBEE0Tt+7+gUDbEbzlgQv+GZ/OyV53/waewOFKz6lET/zEKZxkFGgtLXXHyhHgqTFI/C3EKs3UBb+hxdYp7DwRgvRblfaxH3kW/M5Vt6FdjRg6JNQ4bvtqC9S1jqJ/ubopcHohsYSNZbjperVkRYFPL2yQvg1xIVNJ7xTFlIRTgHcjR6FIr6rpu9ax60EEnab5N5x2q3dKgiSb0GHc7ncEnjOZwzSBfTwoL0sxxy7lpaVeRBVACABtlzjZNVIfsTC8kN5CZ+eckhom3bMa15yhIy3uUO8VwcHvNjAZ5FLZ/1LfNi0c6gAsrwkk6xQOKp6jzxw9eCpLSIc5M8uAViLcCW1EN3mwKzOyJdGRF9mwMqUipnrsOIoanjEiAThwth5IE=
