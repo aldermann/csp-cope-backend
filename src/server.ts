@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import compression from "compression"; // compresses requests
-import connectMongo from "connect-mongo";
+// tslint:disable-next-line:no-var-requires
+const connectMongo = require("connect-mongo");
 import express from "express";
 import expressSession from "express-session";
 import mongoose from "mongoose";
