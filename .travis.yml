@@ -4,8 +4,6 @@ node_js:
 services:
 - mongodb
 - docker
-before_install:
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 install:
 - yarn
 script:
@@ -13,6 +11,8 @@ script:
 - yarn unit_test
 - yarn build
 - docker build -t cspcope/cope_backend .
+before_deploy:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 deploy:
   skip_cleanup: true
   provider: script
