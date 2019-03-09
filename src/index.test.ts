@@ -10,7 +10,7 @@ describe("Integration Testing", async function() {
     before(async function() {
         requester = await newRequester();
         await connectToDB();
-        console.log (mongoose.connection.db.databaseName)
+        // console.log (mongoose.connection.db.databaseName)
     });
 
     it("should startup nicely", async function() {
