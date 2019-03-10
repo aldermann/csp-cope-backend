@@ -1,14 +1,10 @@
-# Docker Parent Image with Node and Typescript
-FROM sandrokeil/typescript:latest 
-
-# Create Directory for the Container
+FROM node:8
 WORKDIR /app
-
-# Copy the files we need to our new Directory
-ADD . /app
-
-# Expose the port outside of the container
+COPY ./dist .
+COPY ./package.json .
+COPY ./yarn.lock .
+RUN yarn install --production
 EXPOSE 3000
-
+ENV NODE_ENV=production
 # Start the server
-ENTRYPOINT ["node", "dist/"]
+CMD ["node", "."]
