@@ -13,12 +13,12 @@ install:
 script:
 - yarn integration_test
 - yarn unit_test
-- yarn build
 - echo "SESSION_SECRET=$SESSION_SECRET" > .env.secret
-- docker build -t copeteamcsp/cope_backend .
+- yarn build
+- docker build -t copeteam/cope_backend .
 after_success:
 - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- docker push copeteamcsp/cope_backend
+- docker push copeteam/cope_backend
 - export SSHPASS=$PASSWORD
 - sshpass -e scp docker-compose.yml $USERNAME@$HOST:$DEPLOY_PATH
 - sshpass -e ssh $USERNAME@$HOST $DEPLOY_PATH/deploy.sh
