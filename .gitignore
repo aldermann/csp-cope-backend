@@ -33,3 +33,6 @@ jspm_packages/
 
 # build
 dist/
+
+# key
+deploy_key
