@@ -2,6 +2,8 @@ language: node_js
 node_js:
 - stable
 services:
+addons:
+  ssh_known_hosts: cspcope.tk
 - mongodb
 - docker
 before_install:
