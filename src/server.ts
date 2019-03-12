@@ -7,6 +7,7 @@ import expressSession from "express-session";
 import mongoose from "mongoose";
 import passport from "passport";
 
+import os from "os";
 import userRoute from "./routes/user";
 
 const MongoStore = connectMongo(expressSession);
@@ -32,6 +33,10 @@ app.use("/user", userRoute);
 
 app.get("/", (req, res) => {
     res.send("Hello");
+});
+
+app.get("/test", (req, res) => {
+    res.send(os.hostname());
 });
 
 export default function startServer() {
