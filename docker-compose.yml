@@ -1,7 +1,7 @@
 version: "2"
 services:
   web:
-    image: copeteamcsp/cope_backend
+    image: copeteam/cope_backend
     ports:
       - "3000:3000"
     depends_on:
