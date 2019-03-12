@@ -12,13 +12,9 @@ services:
                 condition: on-failure
         ports:
             - "3000:3000"
-        networks:
-            - webnet
         depends_on:
             - mongo
     mongo:
         image: mongo
         ports:
             - "27017:27017"
-networks:
-    webnet:
