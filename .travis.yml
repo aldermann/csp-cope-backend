@@ -15,7 +15,6 @@ install:
 script:
     - yarn integration_test
     - yarn unit_test
-    - mkdir env
     - echo "SESSION_SECRET=$SESSION_SECRET" > env/.env.secret
     - yarn build
     - docker build -t copeteam/cope_backend .
