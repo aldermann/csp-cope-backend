@@ -4,7 +4,7 @@
     "description": "COPE-Backend",
     "scripts": {
         "dev": "yarn run nodemon",
-        "build": "yarn run tsc && cp .env.secret dist 2> /dev/null || : && cp .env.production dist && cp README.md dist && cp LICENSE dist",
+        "build": "yarn run tsc && cp env/.env.secret dist/env/.env.secret 2> /dev/null || : && cp env/.env.production dist/env/.env.production && cp README.md dist && cp LICENSE dist",
         "unit_test": "NODE_ENV=testing mocha -r ts-node/register src/**/*.spec.ts --exit",
         "integration_test": "NODE_ENV=testing mocha -r ts-node/register src/index.test.ts --exit"
     },

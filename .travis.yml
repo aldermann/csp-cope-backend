@@ -1,31 +1,39 @@
 language: node_js
 node_js:
-- stable
+    - stable
 services:
-- mongodb
-- docker
+    - mongodb
+    - docker
 before_install:
-- openssl aes-256-cbc -K $encrypted_1c32be81a71f_key -iv $encrypted_1c32be81a71f_iv -in deploy_key.enc -out deploy_key -d
-- eval "$(ssh-agent -s)"
-- chmod 600 ./deploy_key
-- echo -e "Host cspcope.tk\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-- ssh-add ./deploy_key
-- ssh -i ./deploy_key csp@cspcope.tk ls
+    - openssl aes-256-cbc -K $encrypted_1c32be81a71f_key -iv $encrypted_1c32be81a71f_iv -in deploy_key.enc -out deploy_key -d
+    - eval "$(ssh-agent -s)"
+    - chmod 600 ./deploy_key
+    - echo -e "Host cspcope.tk\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - ssh-add ./deploy_key
 install:
-- yarn
+    - yarn
 script:
-- yarn integration_test
-- yarn unit_test
-- echo "SESSION_SECRET=$SESSION_SECRET" > .env.secret
-- yarn build
-- docker build -t copeteam/cope_backend .
+    - yarn integration_test
+    - yarn unit_test
+    - mkdir env
+    - echo "SESSION_SECRET=$SESSION_SECRET" > env/.env.secret
+    - yarn build
+    - docker build -t copeteam/cope_backend .
 after_success:
-- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- docker push copeteam/cope_backend
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker push copeteam/cope_backend
+    - scp -i ./deploy_key ./docker-compose.yml "$SSH_USER"@cspcope.tk:"$DEPLOY_PATH/docker-compose.yml"
+    - ssh -i ./deploy_key "$SSH_USER"@cspcope.tk "$DEPLOY_PATH/deploy.sh"
 env:
-  global:
-  - secure: quUhyOWLTUVIbddroFi51ntgx7ugnPg7kmuWDouIgpru5gElxQ7Sxca2g9s9u4g1+s9Y3WDAv0ciantObNyhQa7Ci4HYRWtPHA9Uc0SJVCWRc0GxQiLb47JxZ3YAKr5rY1NfoU1rJEF85vq4j4n3fO4KyneAuRt2uH8vns61tHX65ubM5hplQCRZ2WE1xVmChud/2qTkWF+4pjPBs2pfXlP1wN2sz6FhzOEmYmPvjGngo0SHeGeOTNrYV/+qOth8g/SLS9+WgnHUCCDzyQxDO+ULa1LyDg0Cc1jjEj3igYtQkihmdVJBod6RAEk3RTZXD6gi6KrkFswBGBKXY3SQcF8cRqVt+XFYPsuSrF6RfEattF0dPmr5t3BEky2TbHllmJ+voi/wF20tlVPqMrsZ0LelTFjHfXA8F7Lx9bUIZI3Xnq/qS5mj1PTIWvqRVZYkBysqVa7KhOQEa1bhgfGERtBqnBltHkBrujN/DHTFPzRw3hLrKlx5mfMlU23vLAMDxiEfHAKNjhSIbTVs7Nb8Jd4i4H/pWPjo89bz0Lqu9IrOtrSBKprNkYrHahQPRcbqJRuL1tFMYVgILo5/81HBygjBqW58EtRVBl5yfM4bYnEWod6V15yC23xLeme8lGP2MuPCWUkWS8RNJB8Y9b40hO8cBi5RCDbwH6SSV24btpc=
-  - secure: by7gqBZ5b31CIAAUETYw6HmbkHkQ1cJAYcJY9S28EfNiE0bVGr1Qgosu1LiIV1JpjLZpC6x6U7rrhCpUIkpUbUwi/rWEzm+ANd/Zx/K2wQLt8ISehjyCkajcY0AgKI21EL/zxp5E4TN8t1GqNALEzQurQlvyK2JX8Bh4lDPyWSQvPr+GkuZ2Mee4t+dGT1zkUbveq2ZOhU1zoDQ8tR1WHqkujj8Y53hUdN7DTyrOFPXvVONAM9+vVin7cqFDggzUg6Gw5xK4HGS1N0c+RUHbKJ3XU16MQolnthC/q81rKOG/Nx04lqrBjqqtWcGSVGjO1GBCFuslR8dIDBUGSOPC1ZWpnYZTm+P8oLaiVeFEo3e6578gy5BvgimpFiPL6Im9Gtu9hUE49Oj/o7lGhCfjWJnBENMzK1bifCNccs9fGYfBGp/7um84/NQdUv2oU9eKs/G8+DuVbUyLu2vzfSbxwHH11jYbSWM+XlqWuaU2TvsaEv34eXR8nQXS06wZmy2my6k3fViuxOE+txMhV2yqTnyeRiNNXREHzZZsPnIpX4ySojRiuarW0hEesYclC//f4uHNejR8rEMRk825yqZ+FIdTMFnlMnjPndlpR1pwhZ1ddJ3vA0gvdYsm6u+KvBy5dpFPybr2gNWNAmL2JSu4Zj8yTRvDBl8RX3Xcy1cXZXg=
-  - secure: gQ8B6N7/H3uMIEiC9EQA/V0JVg07HiyF3WxWdiwIavEfz7joXxweGSxDuCKKud7uFnqW+cV1gkT6tqQVGtr4CAenbx+H2p8jB1yjSZKx4aR6e0qazv4TzpEwG8s6YveRgmtDP75zFXa7UQu39qrUkWZuK/QVL01d+Y6/dUalBjQlJfPveCwsdOpmMwrZDIzQ/JyJwSBTtmOcH6HxkBfURo6vtZHjzLuwOpOEAdd4YLFOblWlEHyXzmb1mUTCuvbWYkVAUiaWMTXbl2+2gLYubXc6v1w30tu/mBwvhP6QF22dtH+YkOZNE5pGJ9cydX9vR1bzFih4p9zgwOWifXdDYUpgknDEw7kbhZHTUVHXfXlM/wHFpMEhHgfPECDa33Fq5BK1JEoHcCwT0mtCgmOuWKWQyhAm9O3I43omerX0qZ/YsX0wbNVXQ0Sw/XVvzzY7q2hDEwRD+ET6AnY2aoysc822vpao77uTHzCIRdKbFOfMFqW6Eb18smYSo8h8fmjLOrSfBQWjIAX363u3P8X3qUojrga9dmgHVwd9pQR0Z1mNUdoALUDXWr5pYC3hsR+G2cFjqChJE93NwdmQ/nzx2d07693hHTG2qOqiYN/hOYaZXnw7vtGsH+OEAHbX7uMPpmwcJn+Dp4H/9EYEO/2aDGJMj/eQawMg12DF0PPzo3s=
-  #SESSION_SECRET
-  - secure: QCffbk0wJ1LBdNo+2ebWbkDOV/DywXv/vkDHN7tQzQnkEje2ooJN8dXHN+6KhcmgEanAPdEOSmrfFX+3DwopRdwv49MKQdEmEWNTnwlZ9Ku0BTO6XDN4xdUfBBHt+7gfoPlIfZz1/Z1IvNHCT9rS7lZ6r0JbWAlqdYwN8OVx7sy3Du4Dk8Tq6gR/gXa81XQJ0dXx3d42u+4ETvat60XCjBtDHovpbIY5TgTcG4r357q0MPwsgGvbHdA/nULXLjidJ8SZfSsgtNFAbCUqpwKVNGNEA/yh1Lt2EgeBaqG8F1VO+flcM5GJv9ANULGgNGhwtwOzGu9kMPOTRmf/n3b1FimdIT2sO/2sMb5X8hBs7wG6WmPtI2hh4BP+pkfWqXyhwzOm+73nbEVTuoX+jAo2eapRYBBA7JzqbKnIrGM0UhnxGhK9TZE6PPnxjY0RwQc/RG8dIDbwRy+96LMesrCb2U0U9sx+EHfz1V9bjd/OwU8BNb4Vhg5f5BTR1JiBH7zc4S/MxuwdBsl0eTaz7WDyBIpxeuc6/XyXUV+g+2A52mCU4eRMj3IpaGETmnMkA6TInmWsdYtFHMrjujIHKhqiyQlro9qxCztgk1it0pxnzq4Iki3Ca1ED/zPS3KeT9zRD5Ghga3poclji0oU9XCTYWzXfhaXVJ5ce4n9BqeejyXY=
+    global:
+        #DOCKER_USERNAME
+        - secure: quUhyOWLTUVIbddroFi51ntgx7ugnPg7kmuWDouIgpru5gElxQ7Sxca2g9s9u4g1+s9Y3WDAv0ciantObNyhQa7Ci4HYRWtPHA9Uc0SJVCWRc0GxQiLb47JxZ3YAKr5rY1NfoU1rJEF85vq4j4n3fO4KyneAuRt2uH8vns61tHX65ubM5hplQCRZ2WE1xVmChud/2qTkWF+4pjPBs2pfXlP1wN2sz6FhzOEmYmPvjGngo0SHeGeOTNrYV/+qOth8g/SLS9+WgnHUCCDzyQxDO+ULa1LyDg0Cc1jjEj3igYtQkihmdVJBod6RAEk3RTZXD6gi6KrkFswBGBKXY3SQcF8cRqVt+XFYPsuSrF6RfEattF0dPmr5t3BEky2TbHllmJ+voi/wF20tlVPqMrsZ0LelTFjHfXA8F7Lx9bUIZI3Xnq/qS5mj1PTIWvqRVZYkBysqVa7KhOQEa1bhgfGERtBqnBltHkBrujN/DHTFPzRw3hLrKlx5mfMlU23vLAMDxiEfHAKNjhSIbTVs7Nb8Jd4i4H/pWPjo89bz0Lqu9IrOtrSBKprNkYrHahQPRcbqJRuL1tFMYVgILo5/81HBygjBqW58EtRVBl5yfM4bYnEWod6V15yC23xLeme8lGP2MuPCWUkWS8RNJB8Y9b40hO8cBi5RCDbwH6SSV24btpc=
+        #DOCKER_PASSWORD
+        - secure: by7gqBZ5b31CIAAUETYw6HmbkHkQ1cJAYcJY9S28EfNiE0bVGr1Qgosu1LiIV1JpjLZpC6x6U7rrhCpUIkpUbUwi/rWEzm+ANd/Zx/K2wQLt8ISehjyCkajcY0AgKI21EL/zxp5E4TN8t1GqNALEzQurQlvyK2JX8Bh4lDPyWSQvPr+GkuZ2Mee4t+dGT1zkUbveq2ZOhU1zoDQ8tR1WHqkujj8Y53hUdN7DTyrOFPXvVONAM9+vVin7cqFDggzUg6Gw5xK4HGS1N0c+RUHbKJ3XU16MQolnthC/q81rKOG/Nx04lqrBjqqtWcGSVGjO1GBCFuslR8dIDBUGSOPC1ZWpnYZTm+P8oLaiVeFEo3e6578gy5BvgimpFiPL6Im9Gtu9hUE49Oj/o7lGhCfjWJnBENMzK1bifCNccs9fGYfBGp/7um84/NQdUv2oU9eKs/G8+DuVbUyLu2vzfSbxwHH11jYbSWM+XlqWuaU2TvsaEv34eXR8nQXS06wZmy2my6k3fViuxOE+txMhV2yqTnyeRiNNXREHzZZsPnIpX4ySojRiuarW0hEesYclC//f4uHNejR8rEMRk825yqZ+FIdTMFnlMnjPndlpR1pwhZ1ddJ3vA0gvdYsm6u+KvBy5dpFPybr2gNWNAmL2JSu4Zj8yTRvDBl8RX3Xcy1cXZXg=
+        #SESSION_SECRET
+        - secure: QCffbk0wJ1LBdNo+2ebWbkDOV/DywXv/vkDHN7tQzQnkEje2ooJN8dXHN+6KhcmgEanAPdEOSmrfFX+3DwopRdwv49MKQdEmEWNTnwlZ9Ku0BTO6XDN4xdUfBBHt+7gfoPlIfZz1/Z1IvNHCT9rS7lZ6r0JbWAlqdYwN8OVx7sy3Du4Dk8Tq6gR/gXa81XQJ0dXx3d42u+4ETvat60XCjBtDHovpbIY5TgTcG4r357q0MPwsgGvbHdA/nULXLjidJ8SZfSsgtNFAbCUqpwKVNGNEA/yh1Lt2EgeBaqG8F1VO+flcM5GJv9ANULGgNGhwtwOzGu9kMPOTRmf/n3b1FimdIT2sO/2sMb5X8hBs7wG6WmPtI2hh4BP+pkfWqXyhwzOm+73nbEVTuoX+jAo2eapRYBBA7JzqbKnIrGM0UhnxGhK9TZE6PPnxjY0RwQc/RG8dIDbwRy+96LMesrCb2U0U9sx+EHfz1V9bjd/OwU8BNb4Vhg5f5BTR1JiBH7zc4S/MxuwdBsl0eTaz7WDyBIpxeuc6/XyXUV+g+2A52mCU4eRMj3IpaGETmnMkA6TInmWsdYtFHMrjujIHKhqiyQlro9qxCztgk1it0pxnzq4Iki3Ca1ED/zPS3KeT9zRD5Ghga3poclji0oU9XCTYWzXfhaXVJ5ce4n9BqeejyXY=
+        #SSH_USER
+        - secure: HiHDcYpEtVOhR1b4xHlbFjgbWJ5qYViR+xWOWaCuYq7kWUjyoc8OFX/4lYYibItD1HKqXyWPvQ5uoZQY+Ub0/yPUMpaNYmrB6Gb389WHysLKosyX4glKLXUBfd+Kbp+KWHiGObQTB6cBb1FBfs3slRXroexQNqYzTUEh6u4Pts06c2oGS6WrVyAKLJg00lscZcPOeHqYYydIj5Awf3V2fKvnF7qKqxTJogRopJu/tiZgcLR7EZMvPxO0gga6fWew+q60UIe9UpX2RHX2Z6aWVbYUdFUVxypI28ZYdrPhJNomm7Y33OK3oL0XKTg/ye+yUT6g9QwmDt9pVZEjDJzzqK7XbNaY3g9sq5LOv4DJ3HdY125TnR7VrLoNHh0iBZP1J16S6PwIPSbwVl99AscIYhDqfGj+0VvELHstMmJ92BXvb5wZ3/1Y5Prkuoo0HsKPXwb5BNa2k6+D0TNPg9MqGRw0lVznr5sMW/1MZ62+SjwN6bU64cCuqwfSbYnpibhIKWvKq9M9fRiO2gHXs3TQ6zQrAASJjQWStmZ0kgd+YpCIzPnV71enoaBqSPi0vvVOtJjWlmPJJDcAYEPhFZ4mA10spy+kSz1hOE4tDLLeG3KRr/6GQ0pYciaEs5fqDO5KKg4/mXLDA0SuA8/aL+62AlTPibeMbAC/CdsGq876i6I=
+        #DEPLOY_PATH
+        - secure: byGXB2hVHhMO+/Tz4UbtDIrPcC27/udUo+FFejdcbqvbMA63p0R63gaQ1p7Ob3nmlN8Ef2Us0UUwgEg8V4jLvxRxhn9Mw71LYAshlERYEaJMkWneKRROSXkMBFdWY8Z3jdHDjhFifL4bqCK6BccKZMAqADx8SDpOnQq9GqiAPUxd0FZhyEJoDw6FQZnOIIUMgQSscK0WclgG1/XgYWGtwNMaDLHaWM77CBMgsmyzU/bgMnTqL4vFe0/kilIlE7tRJLHhqCj/dA5bxfUE5BadCF93itQUMLrJ1hFIyk6+3IP2mo+dJa33UXyzOiG0/fV2dY6+v1LdKie0F1i7WMN7jwX21BQOVqYiP5ARtQPtXDXGjQB/v8OKoJVw6KVcQcU+Nzx2NbCwm9TXT78VlEeq74yig2Ve+3Rgm9JYJdZJ7f/+3cWaPL68/63vG6ccy8mKKBAtxPdaBBKJ8gXFFNzOla/yDanqgWTPd8INzDCjTQDD2vp4rwicIHZne1nHBAUjCYxOZROT2crPdVnqnMFIQQ0mVpwHDZr9+jyuN5RaJHH6XZDfvoQWzmCdHSFBNwdejI5+/CEjdSGK7pCcS1TccusIw3+zIJVzkQXLX6J0bEAtNXAOwzTYXzXIxDDiH+VjNzOvMTovugX4k0CIJmWHIOss98YYXfyCI0KUZ4xtTNg=
+
