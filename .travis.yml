@@ -8,7 +8,7 @@ before_install:
     - openssl aes-256-cbc -K $encrypted_1c32be81a71f_key -iv $encrypted_1c32be81a71f_iv -in deploy_key.enc -out deploy_key -d
     - eval "$(ssh-agent -s)"
     - chmod 600 ./deploy_key
-    - echo -e "Host cspcope.tk\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - echo -e "Host 139.59.245.106\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     - ssh-add ./deploy_key
 install:
     - yarn
@@ -21,8 +21,8 @@ script:
 after_success:
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
     - docker push copeteam/cope_backend
-    - scp -i ./deploy_key ./docker-compose.yml "$SSH_USER"@cspcope.tk:"$DEPLOY_PATH/docker-compose.yml"
-    - ssh -i ./deploy_key "$SSH_USER"@cspcope.tk "$DEPLOY_PATH/deploy.sh"
+    - scp -i ./deploy_key ./docker-compose.yml "$SSH_USER"@139.59.245.106:"$DEPLOY_PATH/docker-compose.yml"
+    - ssh -i ./deploy_key "$SSH_USER"@139.59.245.106"$DEPLOY_PATH/deploy.sh"
 env:
     global:
         #DOCKER_USERNAME
