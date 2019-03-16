@@ -22,7 +22,7 @@ after_success:
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
     - docker push copeteam/cope_backend
     - scp -i ./deploy_key ./docker-compose.yml "$SSH_USER"@139.59.245.106:"$DEPLOY_PATH/docker-compose.yml"
-    - ssh -i ./deploy_key "$SSH_USER"@139.59.245.106"$DEPLOY_PATH/deploy.sh"
+    - ssh -i ./deploy_key "$SSH_USER"@139.59.245.106 "$DEPLOY_PATH/deploy.sh"
 env:
     global:
         #DOCKER_USERNAME
